@@ -11,7 +11,10 @@ using System.Net;
 namespace CatalogAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [ApiVersion(1.0)]
+    [ApiVersion(2.0)]
+    [Route("api/[controller]")]
+    //[Route("api/v{version:apiVersion}/[controller]")] URI Versioning
     public class CatalogController : ControllerBase
     {   
         private readonly ILogger<CatalogController> _logger;
@@ -25,7 +28,7 @@ namespace CatalogAPI.Controllers
         }
 
         [HttpGet]
-        [Route("getitems")]
+        [Route("getitems"), MapToApiVersion(1.0)]
         [ProducesResponseType(typeof(PaginatedItemsViewModel<CatalogItem>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(IEnumerable<CatalogItem>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -57,6 +60,41 @@ namespace CatalogAPI.Controllers
             return Ok(new PaginatedItemsViewModel<CatalogItem>(pageIndex, pageSize, totalItems, pageItems));
         }
 
+        [HttpGet]
+        [Route("getitems"), MapToApiVersion(2.0)]
+        [ProducesResponseType(typeof(PaginatedItemsViewModel<CatalogItemViewModel>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(IEnumerable<CatalogItemViewModel>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetItemsAsyncV2(
+            [FromQuery]int pageSize = 10,
+            [FromQuery]int pageIndex = 0,
+            string ids = null)
+        {
+            if (!string.IsNullOrEmpty(ids))
+            {
+                var items = await GetItemsByIdsAsync(ids);
+                if (!items.Any())
+                {
+                    return BadRequest("ids value is invalid. Must be a comma separated value");
+                }
+
+                return Ok(items.ToViewModel());
+            }
+
+            var totalItems = await _context.CatalogItems
+                .LongCountAsync();
+
+            var pageItems = await _context.CatalogItems
+                .OrderBy(x => x.Name)
+                .Include(x => x.CatalogBrand)
+                .Include(x => x.CatalogType)
+                .Skip(pageSize * pageIndex)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return Ok(new PaginatedItemsViewModel<CatalogItemViewModel>(pageIndex, pageSize, totalItems, pageItems.ToViewModel()));
+        }
+
         private async Task<List<CatalogItem>> GetItemsByIdsAsync(string ids)
         {
             var numIds = ids.Split(",").Select(id => (Valid: int.TryParse(id, out int x), Value: x));
@@ -67,7 +105,10 @@ namespace CatalogAPI.Controllers
             }
 
             var idsSelect = numIds.Select(id => id.Value);
-            var items = await _context.CatalogItems.Where(ci => idsSelect.Contains(ci.Id)).ToListAsync();
+            var items = await _context.CatalogItems.Where(ci => idsSelect.Contains(ci.Id))
+                .Include(x => x.CatalogBrand)
+                .Include(x => x.CatalogType)
+                .ToListAsync();
 
             return items;
         }
