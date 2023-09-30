@@ -1,0 +1,28 @@
+version: '3.4'
+
+services:
+  sqldata:
+    image: mcr.microsoft.com/mssql/server:2019-latest 
+    environment:
+      - SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y    
+    ports:
+      - "5433:1433"
+  basketdata:
+    image: redis:alpine
+
+  catalogapi:
+    image: ${DOCKER_REGISTRY-}catalogapi
+    build:
+      context: .
+      dockerfile: CatalogAPI/Dockerfile
+    depends_on:
+      - sqldata
+
+  basketapi:
+    image: ${DOCKER_REGISTRY-}basketapi
+    build:
+      context: .
+      dockerfile: BasketAPI/Dockerfile
+    depends_on:
+      - basketdata

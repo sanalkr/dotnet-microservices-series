@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="EventServiceBus.DefaultServiceBusConnection" BaseTypeListCollapsed="true">
+    <Position X="4.25" Y="4" Width="2.75" />
+    <Members>
+      <Field Name="_disposed" Hidden="true" />
+      <Field Name="_serviceBusConnectionString" Hidden="true" />
+      <Field Name="_subscriptionClient" Hidden="true" />
+      <Field Name="_topicClient" Hidden="true" />
+    </Members>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAEAIBAACAAABAAAAAAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>DefaultServiceBusConnection.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="EventServiceBus.ServiceBusEventBus" BaseTypeListCollapsed="true">
+    <Position X="7.5" Y="4" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAQAIAUAAAAAAIBAAAAAAAAAIMAAAQgAAAAAAUIBgCA=</HashCode>
+      <FileName>ServiceBusEventBus.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="1.3" />
+  </Class>
+  <Class Name="EventBus.InMemoryEventBusSubscriptionsManager">
+    <Position X="0.5" Y="4" Width="3.25" />
+    <Compartments>
+      <Compartment Name="Properties" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="EventServiceBus.IServiceBusConnection">
+    <Position X="4.25" Y="0.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IServiceBusConnection.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="EventBus.Contracts.IEventBus">
+    <Position X="7.5" Y="0.5" Width="2.75" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="EventBus.Contracts.IIntegrationEventHandler&lt;TIntegrationEvent&gt;">
+    <Position X="11.25" Y="0.5" Width="3.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="EventBus.Contracts.IEventBusSubscriptionManager">
+    <Position X="0.5" Y="0.5" Width="3.25" />
+    <TypeIdentifier />
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,0 +1,33 @@
+version: '3.4'
+
+services:
+  catalogapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ConnectionStrings__Default=Server=sqldata;Database=CatalogDB;User Id=sa;Password=Pass@word;TrustServerCertificate=True;
+      - SubscriptionClientName=catalog
+      - EventBusConnectionString=Endpoint=sb://oc-microsvcs-bus.servicebus.windows.net/;SharedAccessKeyName=TopicSAS;SharedAccessKey=FwJpd42kgCdJw1Jb7rzMM7gABnMAEX8R7+ASbBSGzUY=;EntityPath=eshop_event_bus
+    ports:
+      - "5101:80"
+      - "9101:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  basketapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - RedisConnectionString=${ESHOP_AZURE_REDIS_BASKET_DB:-basketdata}
+      - SubscriptionClientName=basket
+      - EventBusConnectionString=Endpoint=sb://oc-microsvcs-bus.servicebus.windows.net/;SharedAccessKeyName=TopicSAS;SharedAccessKey=FwJpd42kgCdJw1Jb7rzMM7gABnMAEX8R7+ASbBSGzUY=;EntityPath=eshop_event_bus
+    ports:
+      - "5103:80"
+      - "9103:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+  basketdata:
+    ports:
+      - "6379:6379"
